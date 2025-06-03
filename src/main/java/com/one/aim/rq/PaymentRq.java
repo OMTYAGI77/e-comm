@@ -15,5 +15,7 @@ public class PaymentRq extends BaseVM {
 
 	private String paymentMethod;
 
+	private String userId;
+
 
 }
