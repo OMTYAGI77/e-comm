@@ -14,13 +14,12 @@ public class PaymentRq extends BaseVM {
 	private String amount;
 
 	private String paymentMethod;
-<<<<<<< HEAD
+
 	
 	private String userId;
-=======
 
-	private String userId;
 
->>>>>>> 7609b2fab41e87d5bb42531322e98aedcd9326ef
+
+
 
 }

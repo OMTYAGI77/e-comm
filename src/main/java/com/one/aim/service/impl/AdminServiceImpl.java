@@ -8,6 +8,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import com.one.aim.bo.AdminBO;
+import com.one.aim.bo.UserBO;
 import com.one.aim.constants.ErrorCodes;
 import com.one.aim.constants.MessageCodes;
 import com.one.aim.helper.AdminHelper;
@@ -86,5 +87,11 @@ public class AdminServiceImpl implements AdminService {
 		adminRepo.save(adminBO);
 		AdminRs adminRs = AdminMapper.mapToAdminRs(adminBO);
 		return ResponseUtils.success(new AdminDataRs(message, adminRs));
+	}
+	
+	
+	public AdminBO getAdminBOById(Long id) {
+		Optional<AdminBO> admin = adminRepo.findById(id);
+        return admin.orElse(null);
 	}
 }

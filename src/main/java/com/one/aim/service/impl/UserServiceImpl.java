@@ -119,4 +119,10 @@ public class UserServiceImpl implements UserService {
 		return ResponseUtils.success(new LoginDataRs(message, accessToken, refreshToken, userDetails.getId(),
 				userDetails.getUsername(), userDetails.getName(), userDetails.getEmail()));
 	}
+
+	
+	public UserBO getUserBOById(Long id) {
+		Optional<UserBO> user = userRepo.findById(id);
+        return user.orElse(null);
+	}
 }

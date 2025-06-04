@@ -8,6 +8,6 @@ import com.one.aim.bo.UserBO;
 @Repository
 public interface UserRepo extends JpaRepository<UserBO, Long> {
 
-	UserBO findByUsername(String username);
+	public UserBO findByUsername(String username);
 
 }

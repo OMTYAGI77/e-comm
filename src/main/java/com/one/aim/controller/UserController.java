@@ -7,11 +7,14 @@ import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.one.aim.bo.UserBO;
 import com.one.aim.rq.LoginRq;
 import com.one.aim.rq.UserRq;
 import com.one.aim.service.UserService;
@@ -61,4 +64,10 @@ public class UserController {
 			throw e;
 		}
 	}
+	
+	@GetMapping("/find/{id}")
+    public UserBO getUserBOById(@PathVariable Long id) {
+        return userService.getUserBOById(id);
+    }
+	
 }
