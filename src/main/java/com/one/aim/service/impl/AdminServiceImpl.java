@@ -19,6 +19,7 @@ import com.one.aim.rs.AdminRs;
 import com.one.aim.rs.data.AdminDataRs;
 import com.one.aim.service.AdminService;
 import com.one.constants.StringConstants;
+import com.one.utils.AuthUtils;
 import com.one.utils.Utils;
 import com.one.vm.core.BaseRs;
 import com.one.vm.utils.ResponseUtils;
@@ -90,8 +91,20 @@ public class AdminServiceImpl implements AdminService {
 	}
 	
 	
-	public AdminBO getAdminBOById(Long id) {
-		Optional<AdminBO> admin = adminRepo.findById(id);
+//	public AdminBO getAdminBOById(Long id) {
+//		Optional<AdminBO> admin = adminRepo.findById(id);
+//        return admin.orElse(null);
+//	}
+	
+	public Object retrieveAdminBO() {
+		Optional<AdminBO> admin = adminRepo.findById(AuthUtils.findLoggedInUser().getDocId());
         return admin.orElse(null);
 	}
+
+
+//@Override
+//public AdminBO getAdminBOById(Long id) {
+//	// TODO Auto-generated method stub
+//	return null;
+//}
 }

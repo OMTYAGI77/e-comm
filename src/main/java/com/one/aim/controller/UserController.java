@@ -65,9 +65,19 @@ public class UserController {
 		}
 	}
 	
-	@GetMapping("/find/{id}")
-    public UserBO getUserBOById(@PathVariable Long id) {
-        return userService.getUserBOById(id);
-    }
+//	@GetMapping("/find/{id}")
+//    public UserBO getUserBOById(@PathVariable Long id) {
+//        return userService.getUserBOById(id);
+//    }
+	
+	@PostMapping("/find")
+	public ResponseEntity<?> retrieveUserBO() throws Exception {
+
+		if (log.isDebugEnabled()) {
+			log.debug("Executing RESTfulService [POST /user]");
+		}
+		return new ResponseEntity<>(userService.retrieveUserBO(), HttpStatus.OK);
+	}
+
 	
 }

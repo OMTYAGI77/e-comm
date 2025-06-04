@@ -12,6 +12,12 @@ public interface UserService {
 	
 	 public BaseRs signIn(Authentication rq) throws Exception;
 	 
-	 public UserBO getUserBOById(Long id);
+	// public UserBO getUserBOById(Long id);
+
+	public Object retrieveUserBO();
+
+//	public Object retrieveUserBO();
+
+	
 
 }

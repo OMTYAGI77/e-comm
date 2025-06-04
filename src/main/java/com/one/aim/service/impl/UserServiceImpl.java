@@ -25,6 +25,7 @@ import com.one.aim.service.UserService;
 import com.one.constants.StringConstants;
 import com.one.security.jwt.JwtUtils;
 import com.one.service.impl.UserDetailsImpl;
+import com.one.utils.AuthUtils;
 import com.one.utils.Utils;
 import com.one.vm.core.BaseRs;
 import com.one.vm.utils.ResponseUtils;
@@ -121,8 +122,24 @@ public class UserServiceImpl implements UserService {
 	}
 
 	
-	public UserBO getUserBOById(Long id) {
-		Optional<UserBO> user = userRepo.findById(id);
+//	public UserBO getUserBOById(Long id) {
+//		Optional<UserBO> user = userRepo.findById(id);
+//        return user.orElse(null);
+//	}
+	
+	
+//	public UserBO getUserBOById(Long id) {
+//		Optional<UserBO> user = userRepo.findById(AuthUtils.findLoggedInUser().getDocId());
+//        return user.orElse(null);
+//	}
+
+	
+	public Object retrieveUserBO() {
+		Optional<UserBO> user = userRepo.findById(AuthUtils.findLoggedInUser().getDocId());
         return user.orElse(null);
 	}
+
+	
+
+	
 }

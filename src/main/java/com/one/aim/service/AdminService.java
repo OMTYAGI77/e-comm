@@ -7,7 +7,9 @@ import com.one.vm.core.BaseRs;
 public interface AdminService {
 	
 	public BaseRs saveAdmin(AdminRq rq) throws Exception;
+
+	public Object retrieveAdminBO();
 	
-	public AdminBO getAdminBOById(Long id);
+	//public AdminBO getAdminBOById(Long id);
 
 }
