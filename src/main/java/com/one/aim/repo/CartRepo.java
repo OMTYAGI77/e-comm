@@ -13,5 +13,9 @@ public interface CartRepo extends JpaRepository<CartBO, Long> {
 	List<CartBO> findByUserId(Long userId);
 
 	List<CartBO> findByEnabledIsTrue();
+	
+	List<CartBO> findAllByCategory(String category);
+	
+	List<CartBO> findAllBySellerid(Long sellerId);
 
 }

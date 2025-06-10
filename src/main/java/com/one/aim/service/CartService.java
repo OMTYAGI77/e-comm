@@ -4,10 +4,13 @@ import com.one.aim.rq.CartRq;
 import com.one.vm.core.BaseRs;
 
 public interface CartService {
-	
-	public BaseRs saveCart(CartRq rq) throws Exception;
-	
-	public BaseRs retrieveCart() throws Exception;
 
+	public BaseRs saveCart(CartRq rq) throws Exception;
+
+	public BaseRs retrieveCarts(int limit, int offset) throws Exception;
+
+	public BaseRs retrieveCartsByCategory(String category);
+
+	public BaseRs retrieveCart(String id);
 
 }

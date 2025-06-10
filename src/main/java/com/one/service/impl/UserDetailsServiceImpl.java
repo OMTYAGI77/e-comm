@@ -23,11 +23,11 @@ public class UserDetailsServiceImpl implements UserDetailsService {
 	@Override
 	public UserDetails loadUserByUsername(String usernameOrEmpNumber) throws UsernameNotFoundException {
 
-		System.out.println("hiiii------1");
 		System.out.println(usernameOrEmpNumber);
 		UserBO user = userRepo.findByUsername(usernameOrEmpNumber);
 		AdminBO admin = adminRepo.findByUsername(usernameOrEmpNumber);
-		if (user == null && admin == null) {
+		AdminBO seller = adminRepo.findByUsername(usernameOrEmpNumber);
+		if (user == null && admin == null && seller==null) {
 			new UsernameNotFoundException("User Not Found : " + usernameOrEmpNumber);
 		}
 		if (admin != null) {

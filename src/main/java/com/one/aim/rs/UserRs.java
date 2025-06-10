@@ -2,8 +2,6 @@ package com.one.aim.rs;
 
 import java.io.Serializable;
 
-import com.one.constants.StringConstants;
-
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;

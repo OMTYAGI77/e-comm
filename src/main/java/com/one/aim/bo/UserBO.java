@@ -36,4 +36,7 @@ public class UserBO {
 	@OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
 	private List<CartBO> cartItems = new ArrayList<>();
 
+	@OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
+	private List<WishlistBO> wishlistItems = new ArrayList<>();
+
 }

@@ -1,5 +1,8 @@
 package com.one.aim.rq;
 
+import java.util.Collections;
+import java.util.List;
+
 import com.one.vm.core.BaseVM;
 
 import lombok.Getter;
@@ -26,5 +29,7 @@ public class CartRq extends BaseVM {
 	private boolean enabled = true;
 
 	private int offer;
+	
+	 private List<AttachmentRq> atts = Collections.emptyList();
 
 }

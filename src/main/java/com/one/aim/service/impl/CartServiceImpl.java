@@ -4,20 +4,25 @@ import java.util.List;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 
 import com.one.aim.bo.AdminBO;
 import com.one.aim.bo.CartBO;
+import com.one.aim.bo.SellerBO;
 import com.one.aim.constants.ErrorCodes;
 import com.one.aim.constants.MessageCodes;
 import com.one.aim.mapper.CartMapper;
 import com.one.aim.repo.AdminRepo;
 import com.one.aim.repo.CartRepo;
+import com.one.aim.repo.SellerRepo;
 import com.one.aim.rq.CartRq;
 import com.one.aim.rs.CartRs;
 import com.one.aim.rs.data.CartDataRs;
 import com.one.aim.rs.data.CartDataRsList;
 import com.one.aim.service.CartService;
+import com.one.aim.service.FileService;
 import com.one.constants.StringConstants;
 import com.one.utils.AuthUtils;
 import com.one.utils.Utils;
@@ -36,22 +41,28 @@ public class CartServiceImpl implements CartService {
 	@Autowired
 	AdminRepo adminRepo;
 
+	@Autowired
+	SellerRepo sellerRepo;
+
+	@Autowired
+	FileService fileService;
+
 	@Override
 	public BaseRs saveCart(CartRq rq) throws Exception {
 
 		if (log.isDebugEnabled()) {
 			log.debug("Executing saveCompany(CompanyRq) ->");
 		}
-		
-		
 
 		AdminBO adminBO = adminRepo.findByIdAndUsername(AuthUtils.findLoggedInUser().getDocId(),
-                AuthUtils.findLoggedInUser().getUserName());
+				AuthUtils.findLoggedInUser().getUserName());
+		SellerBO sellerBO = sellerRepo.findByIdAndUsername(AuthUtils.findLoggedInUser().getDocId(),
+				AuthUtils.findLoggedInUser().getUserName());
 
-if (null == adminBO) {
-    log.error(ErrorCodes.EC_UNAUTHORIZED_ACCESS);
-    return ResponseUtils.failure(ErrorCodes.EC_UNAUTHORIZED_ACCESS);
-}
+		if (null == adminBO && null == sellerBO) {
+			log.error(ErrorCodes.EC_UNAUTHORIZED_ACCESS);
+			return ResponseUtils.failure(ErrorCodes.EC_UNAUTHORIZED_ACCESS);
+		}
 		// List<String> errors = UserHelper.validateUser(rq);
 
 //		if (Utils.isNotEmpty(errors)) {
@@ -77,6 +88,11 @@ if (null == adminBO) {
 		if (!pName.equals(Utils.getValidString(cartBO.getPname()))) {
 			cartBO.setPname(pName);
 		}
+		Long sellerId = AuthUtils.findLoggedInUser().getDocId();
+		cartBO.setSellerid(sellerId);
+
+		// cartBO.setCartatts(fileService.prepareAttBOs(rq.getAtts(), null));
+
 		String description = Utils.getValidString(rq.getDescription());
 		if (!description.equals(cartBO.getDescription())) {
 			cartBO.setDescription(description);
@@ -94,15 +110,18 @@ if (null == adminBO) {
 	}
 
 	@Override
-	public BaseRs retrieveCart() throws Exception {
+	public BaseRs retrieveCarts(int limit, int offset) throws Exception {
 
 		if (log.isDebugEnabled()) {
 			log.debug("Executing saveCompany(CompanyRq) ->");
 		}
 
 		try {
-			List<CartBO> bos = cartRepo.findAll();
-			List<CartRs> rslist = CartMapper.mapToCartRsList(bos);
+			int page = offset / limit;
+			PageRequest pageRequest = PageRequest.of(page, limit);
+			Page<CartBO> cartPage = cartRepo.findAll(pageRequest);
+
+			List<CartRs> rslist = CartMapper.mapToCartRsList(cartPage.getContent());
 			String message = MessageCodes.MC_RETRIEVED_SUCCESSFUL;
 			return ResponseUtils.success(new CartDataRsList(message, rslist));
 		} catch (Exception e) {
@@ -110,6 +129,36 @@ if (null == adminBO) {
 			return ResponseUtils.failure(e);
 		}
 
+	}
+
+	@Override
+	public BaseRs retrieveCartsByCategory(String category) {
+
+		if (log.isDebugEnabled()) {
+			log.debug("Executing retrieveCartsByCategory(category) ->");
+		}
+
+		List<CartBO> bos = cartRepo.findAllByCategory(category);
+		List<CartRs> rslist = CartMapper.mapToCartRsList(bos);
+		String message = MessageCodes.MC_RETRIEVED_SUCCESSFUL;
+		return ResponseUtils.success(new CartDataRsList(message, rslist));
+	}
+
+	@Override
+	public BaseRs retrieveCart(String id) {
+
+		if (log.isDebugEnabled()) {
+			log.debug("Executing retrieveCartsByCategory(category) ->");
+		}
+
+		Optional<CartBO> optBo = cartRepo.findById(Long.valueOf(id));
+		CartBO cartBO = null;
+		if (!optBo.isEmpty()) {
+			cartBO = optBo.get();
+		}
+		CartRs rs = CartMapper.mapToCartRs(cartBO);
+		String message = MessageCodes.MC_RETRIEVED_SUCCESSFUL;
+		return ResponseUtils.success(new CartDataRs(message, rs));
 	}
 
 }

@@ -2,7 +2,6 @@ package com.one.aim.service;
 
 import org.springframework.security.core.Authentication;
 
-import com.one.aim.bo.UserBO;
 import com.one.aim.rq.UserRq;
 import com.one.vm.core.BaseRs;
 

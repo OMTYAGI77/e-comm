@@ -1,6 +1,7 @@
 package com.one.aim.bo;
 
-import jakarta.persistence.Column;
+import java.util.List;
+
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
@@ -35,9 +36,13 @@ public class CartBO {
 	private boolean enabled = true;
 
 	private int offer;
-	
+
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "user_id")
 	private UserBO user;
+
+	private Long sellerid;
+
+	private List<AttachmentBO> cartatts;
 
 }

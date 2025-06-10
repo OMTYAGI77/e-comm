@@ -35,7 +35,7 @@ public class AdminController {
 //        return adminService.getAdminBOById(id);
 //    }
 	
-	@PostMapping("/find/id")
+	@PostMapping("/find/admin")
 	public ResponseEntity<?> retrieveAdminBO() throws Exception {
 
 		if (log.isDebugEnabled()) {
