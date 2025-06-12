@@ -9,8 +9,9 @@ import com.one.aim.bo.AdminBO;
 public interface AdminRepo extends JpaRepository<AdminBO, Long> {
 
 	public AdminBO findByUsername(String username);
-	
-	public AdminBO findByIdAndUsername(Long id,String username);
 
-	
+	public AdminBO findByIdAndUsername(Long id, String username);
+
+	public AdminBO findByEmailOrUsername(String email, String username);
+
 }

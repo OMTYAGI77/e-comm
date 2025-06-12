@@ -1,6 +1,8 @@
 package com.one.aim.rs;
 
 import java.io.Serializable;
+import java.util.Collections;
+import java.util.List;
 
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -20,6 +22,8 @@ public class UserRs implements Serializable {
 	private String email;
 
 	private String phoneNo;
+	
+	private List<AttachmentRs> atts = Collections.emptyList();
 
 	public UserRs(String userName, Long docId) {
 		this.userName = userName;

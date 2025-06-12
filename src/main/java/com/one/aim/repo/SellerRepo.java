@@ -12,4 +12,6 @@ public interface SellerRepo extends JpaRepository<SellerBO, Long> {
 
 	public SellerBO findByIdAndUsername(Long id, String username);
 
+	public SellerBO findByEmailOrUsername(String email, String username);
+
 }

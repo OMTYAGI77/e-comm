@@ -104,6 +104,7 @@ public class CartServiceImpl implements CartService {
 		cartBO.setPrice(rq.getPrice());
 		cartBO.setOffer(rq.getOffer());
 		cartBO.setEnabled(rq.isEnabled());
+		cartBO.setCartatts(fileService.prepareAttBOs(rq.getAtts(), null));
 		cartRepo.save(cartBO);
 		CartRs cartRs = CartMapper.mapToCartRs(cartBO);
 		return ResponseUtils.success(new CartDataRs(message, cartRs));

@@ -1,27 +1,23 @@
 package com.one.aim.rq;
 
-import org.springframework.core.io.InputStreamSource;
+import java.io.Serializable;
 
-import com.one.vm.core.BaseVM;
+import com.one.constants.StringConstants;
 
 import lombok.Getter;
-import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 @Getter
 @Setter
-@NoArgsConstructor
-public class AttachmentRq extends BaseVM {
+public class AttachmentRq implements Serializable {
 
-    private static final long serialVersionUID = -6325010288537883666L;
+	private static final long serialVersionUID = -867319517915820398L;
 
-    private InputStreamSource byteSource;
+	private Long docId;
 
-    private String name;
+	private String name = StringConstants.EMPTY;
 
-    private String type;
+	private String title = StringConstants.EMPTY;
 
-    private String contentType;
-
+	private String description = StringConstants.EMPTY;
 }
-

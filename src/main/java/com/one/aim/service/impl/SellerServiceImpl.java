@@ -20,6 +20,7 @@ import com.one.aim.rs.CartRs;
 import com.one.aim.rs.SellerRs;
 import com.one.aim.rs.data.CartDataRsList;
 import com.one.aim.rs.data.SellerDataRs;
+import com.one.aim.service.FileService;
 import com.one.aim.service.SellerService;
 import com.one.constants.StringConstants;
 import com.one.utils.AuthUtils;
@@ -41,6 +42,9 @@ public class SellerServiceImpl implements SellerService {
 
 	@Autowired
 	private PasswordEncoder passwordEncoder;
+	
+	@Autowired
+	FileService fileService;
 
 	// Sign Up
 	@Override
@@ -90,6 +94,7 @@ public class SellerServiceImpl implements SellerService {
 			String hashedPassword = passwordEncoder.encode(rawPassword);
 			sellerBO.setPassword(hashedPassword);
 		}
+		sellerBO.setAtts(fileService.prepareAttBOs(rq.getElExemptionAtts(), null));
 		sellerRepo.save(sellerBO);
 		SellerRs sellerRs = SellerMapper.mapToSellerRs(sellerBO);
 		return ResponseUtils.success(new SellerDataRs(message, sellerRs));

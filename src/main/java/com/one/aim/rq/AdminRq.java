@@ -1,5 +1,8 @@
 package com.one.aim.rq;
 
+import java.util.Collections;
+import java.util.List;
+
 import com.one.vm.core.BaseVM;
 
 import lombok.Getter;
@@ -22,4 +25,6 @@ public class AdminRq extends BaseVM {
 	private String phoneNo;
 
 	private String password;
+	
+	 private List<AttachmentRq> elExemptionAtts = Collections.emptyList();
 }

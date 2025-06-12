@@ -45,5 +45,8 @@ public class LoginDataRs extends BaseDataRs {
 		this.username = username;
 	}
 
-}
+	public LoginDataRs(String message) {
+		super(message);
+	}
 
+}

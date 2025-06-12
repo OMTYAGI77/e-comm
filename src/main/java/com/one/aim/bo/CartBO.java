@@ -2,6 +2,8 @@ package com.one.aim.bo;
 
 import java.util.List;
 
+import jakarta.persistence.CollectionTable;
+import jakarta.persistence.ElementCollection;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
@@ -43,6 +45,8 @@ public class CartBO {
 
 	private Long sellerid;
 
+	@ElementCollection(fetch = FetchType.LAZY)
+	@CollectionTable(name = "cart_attachments", joinColumns = @JoinColumn(name = "cart_id"))
 	private List<AttachmentBO> cartatts;
 
 }

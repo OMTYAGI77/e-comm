@@ -15,7 +15,7 @@ public class AttachmentRs implements Serializable {
 
     private static final long serialVersionUID = -4441996416869690126L;
 
-    private String docId = StringConstants.EMPTY;
+    private long docId;
 
     private String name = StringConstants.EMPTY;
 
@@ -29,7 +29,7 @@ public class AttachmentRs implements Serializable {
 
     private String description = StringConstants.EMPTY;
 
-    public AttachmentRs(String docId, String name, String type) {
+    public AttachmentRs(long docId, String name, String type) {
         super();
         this.docId = docId;
         this.name = name;

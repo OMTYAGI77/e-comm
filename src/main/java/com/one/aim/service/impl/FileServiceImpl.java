@@ -8,6 +8,9 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.nio.file.Files;
 import java.time.LocalDate;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 
 import org.apache.commons.compress.utils.IOUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,11 +18,14 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
+import com.one.aim.bo.AttachmentBO;
 import com.one.aim.bo.FileBO;
 import com.one.aim.constants.ErrorCodes;
 import com.one.aim.constants.MessageCodes;
 import com.one.aim.helper.FileHelper;
+import com.one.aim.mapper.AttachmentMapper;
 import com.one.aim.repo.FileRepo;
+import com.one.aim.rq.AttachmentRq;
 import com.one.aim.rs.FileRs;
 import com.one.aim.rs.data.FileDataRs;
 import com.one.aim.service.FileService;
@@ -244,5 +250,43 @@ public class FileServiceImpl implements FileService {
 		}
 		return os.toByteArray();
 	}
+	
+	 @Override
+	    public List<AttachmentBO> prepareAttBOs(List<AttachmentRq> rsList, String userName) {
+
+	        if (log.isDebugEnabled()) {
+	            log.debug("Executing prepareAttachmentBOs(List<AttachmentRs>, userName) ->");
+	        }
+
+	        try {
+	            if (Utils.isEmpty(rsList)) {
+	                return Collections.<AttachmentBO>emptyList();
+	            }
+	            // TODO need to check duplicate files
+	            List<AttachmentBO> bos = new ArrayList<>();
+	            // Set<String> attachmentFileNames = new HashSet<>();
+	            for (AttachmentRq rs : rsList) {
+	                // if (attachmentFileNames.contains(rs.getName())) {
+	                // continue;
+	                // } else {
+	                // attachmentFileNames.add(rs.getName());
+	                long fileDocId =rs.getDocId();
+	                FileBO file = fileRepo.findByIdAndEnabledIsTrue(fileDocId);
+	                if (null != file) {
+	                    AttachmentBO bo = AttachmentMapper.prepareAttachmentBO(rs, file, userName);
+	                    if (null == bo) {
+	                        continue;
+	                    }
+	                    bos.add(bo);
+	                }
+	                // }
+	            }
+	            return bos;
+	        } catch (Exception e) {
+	            log.error("Exception in prepareAttachmentBOs(List<AttachmentRs>, userName) ->" + e);
+	            return Collections.<AttachmentBO>emptyList();
+	        }
+	    }
+
 
 }

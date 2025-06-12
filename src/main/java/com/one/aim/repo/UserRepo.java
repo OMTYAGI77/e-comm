@@ -10,4 +10,8 @@ public interface UserRepo extends JpaRepository<UserBO, Long> {
 
 	public UserBO findByUsername(String username);
 
+	public UserBO findByEmail(String email);
+	
+	public UserBO findByEmailOrUsername(String email, String username);
+
 }

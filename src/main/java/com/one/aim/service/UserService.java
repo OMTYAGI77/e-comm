@@ -8,15 +8,11 @@ import com.one.vm.core.BaseRs;
 public interface UserService {
 
 	public BaseRs saveUser(UserRq rq) throws Exception;
-	
-	 public BaseRs signIn(Authentication rq) throws Exception;
-	 
-	// public UserBO getUserBOById(Long id);
+
+	public BaseRs signIn(Authentication rq) throws Exception;
 
 	public Object retrieveUserBO();
 
-//	public Object retrieveUserBO();
-
-	
+	public BaseRs logout() throws Exception;
 
 }

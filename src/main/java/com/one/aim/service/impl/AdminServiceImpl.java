@@ -17,6 +17,7 @@ import com.one.aim.rq.AdminRq;
 import com.one.aim.rs.AdminRs;
 import com.one.aim.rs.data.AdminDataRs;
 import com.one.aim.service.AdminService;
+import com.one.aim.service.FileService;
 import com.one.constants.StringConstants;
 import com.one.utils.AuthUtils;
 import com.one.utils.Utils;
@@ -34,6 +35,9 @@ public class AdminServiceImpl implements AdminService {
 
 	@Autowired
 	private PasswordEncoder passwordEncoder;
+	
+	@Autowired
+	FileService fileService;
 
 	// Sign Up
 	@Override
@@ -84,6 +88,7 @@ public class AdminServiceImpl implements AdminService {
 			System.out.println("Hashed Password: " + hashedPassword);
 			adminBO.setPassword(hashedPassword);
 		}
+		adminBO.setAtts(fileService.prepareAttBOs(rq.getElExemptionAtts(), null));
 		adminRepo.save(adminBO);
 		AdminRs adminRs = AdminMapper.mapToAdminRs(adminBO);
 		return ResponseUtils.success(new AdminDataRs(message, adminRs));

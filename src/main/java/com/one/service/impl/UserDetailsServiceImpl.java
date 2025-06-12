@@ -7,8 +7,10 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
 import com.one.aim.bo.AdminBO;
+import com.one.aim.bo.SellerBO;
 import com.one.aim.bo.UserBO;
 import com.one.aim.repo.AdminRepo;
+import com.one.aim.repo.SellerRepo;
 import com.one.aim.repo.UserRepo;
 
 @Service
@@ -20,25 +22,55 @@ public class UserDetailsServiceImpl implements UserDetailsService {
 	@Autowired
 	AdminRepo adminRepo;
 
+	@Autowired
+	SellerRepo sellerRepo;
+
 	@Override
 	public UserDetails loadUserByUsername(String usernameOrEmpNumber) throws UsernameNotFoundException {
 
-		System.out.println(usernameOrEmpNumber);
-		UserBO user = userRepo.findByUsername(usernameOrEmpNumber);
-		AdminBO admin = adminRepo.findByUsername(usernameOrEmpNumber);
-		AdminBO seller = adminRepo.findByUsername(usernameOrEmpNumber);
-		if (user == null && admin == null && seller==null) {
-			new UsernameNotFoundException("User Not Found : " + usernameOrEmpNumber);
+		UserBO user = userRepo.findByEmailOrUsername(usernameOrEmpNumber, usernameOrEmpNumber);
+		AdminBO admin = adminRepo.findByEmailOrUsername(usernameOrEmpNumber, usernameOrEmpNumber);
+		SellerBO seller = sellerRepo.findByEmailOrUsername(usernameOrEmpNumber, usernameOrEmpNumber);
+//		if (user != null) {
+//			if (user.isLogin()) {
+//				throw new UsernameNotFoundException("User Already login : " + usernameOrEmpNumber);
+//			} else {
+//				user.setLogin(true);
+//				userRepo.save(user);
+//			}
+//		}
+//		if (admin != null) {
+//			if (user.isLogin()) {
+//				throw new UsernameNotFoundException("User Already login : " + usernameOrEmpNumber);
+//			} else {
+//				admin.setLogin(true);
+//				adminRepo.save(admin);
+//			}
+//		}
+//		if (seller != null) {
+//			if (seller.isLogin()) {
+//				throw new UsernameNotFoundException("User Already login : " + usernameOrEmpNumber);
+//			} else {
+//				seller.setLogin(true);
+//				Repo.save(seller);
+//			}
+//		}
+		if (user == null && admin == null && seller == null) {
+			throw new UsernameNotFoundException("User Not Found : " + usernameOrEmpNumber);
 		}
 		if (admin != null) {
 			user = new UserBO();
 			user.setUsername(admin.getUsername());
 			user.setPassword(admin.getPassword());
 			user.setId(admin.getId());
+			// adminRepo.save(null);
 		}
-		System.out.println("hiiii------2");
-		// UserBO user = optUser.get();
-		System.out.println(user.toString());
+		if (seller != null) {
+			user = new UserBO();
+			user.setUsername(seller.getUsername());
+			user.setPassword(seller.getPassword());
+			user.setId(seller.getId());
+		}
 		Long userid = user.getId();
 		String username = user.getUsername();
 		String password = user.getPassword();
