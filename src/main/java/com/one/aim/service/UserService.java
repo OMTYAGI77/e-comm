@@ -11,7 +11,7 @@ public interface UserService {
 
 	public BaseRs signIn(Authentication rq) throws Exception;
 
-	public Object retrieveUserBO();
+	public BaseRs retrieveUser() throws Exception;
 
 	public BaseRs logout() throws Exception;
 

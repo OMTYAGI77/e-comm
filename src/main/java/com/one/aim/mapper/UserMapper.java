@@ -34,6 +34,7 @@ public class UserMapper {
 			if (Utils.isNotEmpty(bo.getEmail())) {
 				rs.setEmail(bo.getEmail());
 			}
+			rs.setAtts(AttachmentMapper.mapToAttachmentRsList(bo.getAtts()));
 			return rs;
 		} catch (Exception e) {
 			log.error("Exception in mapToUserRs(UserBO) - " + e);

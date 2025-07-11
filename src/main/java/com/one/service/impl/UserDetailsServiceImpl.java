@@ -9,9 +9,11 @@ import org.springframework.stereotype.Service;
 import com.one.aim.bo.AdminBO;
 import com.one.aim.bo.SellerBO;
 import com.one.aim.bo.UserBO;
+import com.one.aim.bo.VendorBO;
 import com.one.aim.repo.AdminRepo;
 import com.one.aim.repo.SellerRepo;
 import com.one.aim.repo.UserRepo;
+import com.one.aim.repo.VendorRepo;
 
 @Service
 public class UserDetailsServiceImpl implements UserDetailsService {
@@ -24,6 +26,9 @@ public class UserDetailsServiceImpl implements UserDetailsService {
 
 	@Autowired
 	SellerRepo sellerRepo;
+	
+	@Autowired
+	VendorRepo vendorRepo;
 
 	@Override
 	public UserDetails loadUserByUsername(String usernameOrEmpNumber) throws UsernameNotFoundException {
@@ -31,6 +36,7 @@ public class UserDetailsServiceImpl implements UserDetailsService {
 		UserBO user = userRepo.findByEmailOrUsername(usernameOrEmpNumber, usernameOrEmpNumber);
 		AdminBO admin = adminRepo.findByEmailOrUsername(usernameOrEmpNumber, usernameOrEmpNumber);
 		SellerBO seller = sellerRepo.findByEmailOrUsername(usernameOrEmpNumber, usernameOrEmpNumber);
+		VendorBO vendor = vendorRepo.findByEmailOrUsername(usernameOrEmpNumber, usernameOrEmpNumber);
 //		if (user != null) {
 //			if (user.isLogin()) {
 //				throw new UsernameNotFoundException("User Already login : " + usernameOrEmpNumber);
@@ -55,7 +61,7 @@ public class UserDetailsServiceImpl implements UserDetailsService {
 //				Repo.save(seller);
 //			}
 //		}
-		if (user == null && admin == null && seller == null) {
+		if (user == null && admin == null && seller == null && vendor==null) {
 			throw new UsernameNotFoundException("User Not Found : " + usernameOrEmpNumber);
 		}
 		if (admin != null) {
@@ -70,6 +76,12 @@ public class UserDetailsServiceImpl implements UserDetailsService {
 			user.setUsername(seller.getUsername());
 			user.setPassword(seller.getPassword());
 			user.setId(seller.getId());
+		}
+		if (vendor != null) {
+			user = new UserBO();
+			user.setUsername(vendor.getUsername());
+			user.setPassword(vendor.getPassword());
+			user.setId(vendor.getId());
 		}
 		Long userid = user.getId();
 		String username = user.getUsername();

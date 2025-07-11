@@ -19,7 +19,6 @@ import com.one.aim.rs.data.PaymentDataRs;
 import com.one.aim.service.PaymentService;
 import com.one.constants.StringConstants;
 import com.one.utils.AuthUtils;
-import com.one.utils.Utils;
 import com.one.vm.core.BaseRs;
 import com.one.vm.utils.ResponseUtils;
 

@@ -1,8 +1,5 @@
 package com.one.aim.rq;
 
-import java.util.Collections;
-import java.util.List;
-
 import com.one.vm.core.BaseVM;
 
 import lombok.Getter;
@@ -12,7 +9,7 @@ import lombok.Setter;
 @Getter
 @Setter
 @NoArgsConstructor
-public class SellerRq extends BaseVM {
+public class VendorRq extends BaseVM {
 
 	private static final long serialVersionUID = 1L;
 
@@ -26,7 +23,13 @@ public class SellerRq extends BaseVM {
 
 	private String password;
 
+	private String gst;
+
+	private String adhaar;
+
+	private String pancard;
+
 	private boolean isVarified;
 
-	private List<AttachmentRq> elExemptionAtts = Collections.emptyList();
+	// private List<AttachmentRq> elExemptionAtts = Collections.emptyList();
 }

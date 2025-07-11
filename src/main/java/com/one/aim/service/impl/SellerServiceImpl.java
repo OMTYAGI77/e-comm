@@ -7,12 +7,14 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import com.one.aim.bo.AdminBO;
 import com.one.aim.bo.CartBO;
 import com.one.aim.bo.SellerBO;
 import com.one.aim.constants.ErrorCodes;
 import com.one.aim.constants.MessageCodes;
 import com.one.aim.mapper.CartMapper;
 import com.one.aim.mapper.SellerMapper;
+import com.one.aim.repo.AdminRepo;
 import com.one.aim.repo.CartRepo;
 import com.one.aim.repo.SellerRepo;
 import com.one.aim.rq.SellerRq;
@@ -41,8 +43,11 @@ public class SellerServiceImpl implements SellerService {
 	CartRepo cartRepo;
 
 	@Autowired
+	AdminRepo adminRepo;
+
+	@Autowired
 	private PasswordEncoder passwordEncoder;
-	
+
 	@Autowired
 	FileService fileService;
 
@@ -70,6 +75,14 @@ public class SellerServiceImpl implements SellerService {
 			if (sellerBO == null) {
 				log.error(ErrorCodes.EC_USER_NOT_FOUND);
 				return ResponseUtils.failure(ErrorCodes.EC_USER_NOT_FOUND);
+			}
+			AdminBO adminBO = adminRepo.findByIdAndUsername(AuthUtils.findLoggedInUser().getDocId(),
+					AuthUtils.findLoggedInUser().getUserName());
+			if (null == adminBO && rq.isVarified()) {
+				log.error(ErrorCodes.EC_UNAUTHORIZED_ACCESS);
+				return ResponseUtils.failure(ErrorCodes.EC_UNAUTHORIZED_ACCESS);
+			} else {
+				sellerBO.setVarified(rq.isVarified());
 			}
 		} else {
 			sellerBO = new SellerBO(); // SAVE
@@ -101,10 +114,27 @@ public class SellerServiceImpl implements SellerService {
 	}
 
 	@Override
-	public Object retrieveSeller() {
-		Optional<SellerBO> seller = sellerRepo.findById(AuthUtils.findLoggedInUser().getDocId());
-		return seller.orElse(null);
+	public BaseRs retrieveSeller() throws Exception {
+
+		if (log.isDebugEnabled()) {
+			log.debug("Executing retrieveUser() ->");
+		}
+		try {
+			Optional<SellerBO> optAdmin = sellerRepo.findById(AuthUtils.findLoggedInUser().getDocId());
+			if (optAdmin.isEmpty()) {
+				log.error(ErrorCodes.EC_SELLER_NOT_FOUND);
+				return ResponseUtils.failure(ErrorCodes.EC_SELLER_NOT_FOUND);
+			}
+			SellerBO sellerBO = optAdmin.get();
+			SellerRs sellerRs = SellerMapper.mapToSellerRs(sellerBO);
+			String message = MessageCodes.MC_RETRIEVED_SUCCESSFUL;
+			return ResponseUtils.success(new SellerDataRs(message, sellerRs));
+		} catch (Exception e) {
+			log.error("Exception retrieveUser() ->" + e);
+			return null;
+		}
 	}
+
 
 	@Override
 	public BaseRs retrieveSellerCarts() throws Exception {

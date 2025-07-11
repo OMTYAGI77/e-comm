@@ -74,6 +74,16 @@ public class ErrorCodes {
 	public static final String EC_UNKNOWN_ERROR = "EC_UNKNOWN_ERROR";
 
 	public static final String EC_USER_NOT_FOUND = "EC_USER_NOT_FOUND";
+	
+	public static final String EC_VENDOR_NOT_FOUND = "EC_VENDOR_NOT_FOUND";
+	
+	public static final String EC_SELLER_NOT_FOUND = "EC_SELLER_NOT_FOUND";
+	
+	public static final String EC_CART_NOT_FOUND = "EC_CART_NOT_FOUND";
+
+	public static final String EC_ORDER_NOT_FOUND = "EC_ORDER_NOT_FOUND";
+
+	public static final String EC_RECORD_NOT_FOUND = "EC_RECORD_NOT_FOUND";
 
 	public static final String EC_USER_ALREADY_EXIST = "EC_USER_ALREADY_EXIST";
 

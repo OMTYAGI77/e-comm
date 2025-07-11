@@ -77,7 +77,7 @@ public class UserController {
 		if (log.isDebugEnabled()) {
 			log.debug("Executing RESTfulService [POST /user]");
 		}
-		return new ResponseEntity<>(userService.retrieveUserBO(), HttpStatus.OK);
+		return new ResponseEntity<>(userService.retrieveUser(), HttpStatus.OK);
 	}
 
 	@PostMapping("/logout")

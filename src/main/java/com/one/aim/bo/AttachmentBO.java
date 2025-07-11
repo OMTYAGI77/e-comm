@@ -3,9 +3,11 @@ package com.one.aim.bo;
 import java.io.Serializable;
 import java.time.LocalDateTime;
 
+import jakarta.persistence.Embeddable;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+
 
 @Getter
 @Setter

@@ -23,6 +23,8 @@ public class SellerRs implements Serializable {
 
 	private String phoneNo;
 
+	private boolean isVarified;
+
 	private List<AttachmentRs> atts = Collections.emptyList();
 
 	public SellerRs(String userName, String docId) {

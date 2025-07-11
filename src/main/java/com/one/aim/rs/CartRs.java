@@ -28,6 +28,12 @@ public class CartRs implements Serializable {
 	private boolean enabled = true;
 
 	private int offer;
+	
+	private boolean isVarified;
+	
+	private int totalItem;
+
+	private int soldItem;
 
 	private List<AttachmentRs> atts = Collections.emptyList();
 

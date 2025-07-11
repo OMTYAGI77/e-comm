@@ -2,6 +2,8 @@ package com.one.aim.repo;
 
 import java.util.List;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
@@ -13,9 +15,15 @@ public interface CartRepo extends JpaRepository<CartBO, Long> {
 	List<CartBO> findByUserId(Long userId);
 
 	List<CartBO> findByEnabledIsTrue();
-	
-	List<CartBO> findAllByCategory(String category);
-	
+
+	List<CartBO> findAllByCategoryAndVarifiedIsTrue(String category);
+
 	List<CartBO> findAllBySellerid(Long sellerId);
+
+	Page<CartBO> findAllByVarifiedIsTrue(Pageable pageable);
+		
+    List<CartBO> findByPnameContainingIgnoreCase(String pname);
+
+    Page<CartBO> findByPnameContainingIgnoreCase(String pname, Pageable pageable);
 
 }

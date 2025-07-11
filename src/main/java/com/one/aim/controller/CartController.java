@@ -52,7 +52,7 @@ public class CartController {
 		}
 		return new ResponseEntity<>(cartService.retrieveCartsByCategory(category), HttpStatus.OK);
 	}
-	
+
 	@GetMapping("/carts/{id}")
 	public ResponseEntity<?> retrieveCart(@PathVariable("id") String id) throws Exception {
 
@@ -60,5 +60,25 @@ public class CartController {
 			log.debug("Executing RESTfulService [POST /user]");
 		}
 		return new ResponseEntity<>(cartService.retrieveCart(id), HttpStatus.OK);
+	}
+
+	@GetMapping("/emptype/carts")
+	public ResponseEntity<?> retrieveCartsEmpType() throws Exception {
+
+		if (log.isDebugEnabled()) {
+			log.debug("Executing RESTfulService [POST /user]");
+		}
+		return new ResponseEntity<>(cartService.retrieveCartByEmpType(), HttpStatus.OK);
+	}
+
+	@GetMapping("/search")
+	public ResponseEntity<?> retrieveCartList(@RequestParam String pname,
+			@RequestParam(value = "limit", required = false, defaultValue = "20") int limit,
+			@RequestParam(value = "offset", required = false, defaultValue = "0") int offset) throws Exception {
+
+		if (log.isDebugEnabled()) {
+			log.debug("Executing RESTfulService [POST /user]");
+		}
+		return new ResponseEntity<>(cartService.searchCartsByPname(pname, offset, limit), HttpStatus.OK);
 	}
 }

@@ -7,7 +7,7 @@ public interface SellerService {
 
 	public BaseRs saveSeller(SellerRq rq) throws Exception;
 
-	public Object retrieveSeller();
+	public BaseRs retrieveSeller() throws Exception;
 
 	public BaseRs retrieveSellerCarts() throws Exception;;
 

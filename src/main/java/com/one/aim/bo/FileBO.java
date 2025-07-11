@@ -1,5 +1,6 @@
 package com.one.aim.bo;
 
+import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -36,6 +37,7 @@ public class FileBO {
 	private String md5;
 
 	@Lob
+	@Column(columnDefinition = "LONGBLOB")
 	private byte[] inputstream;
 
 	private boolean enabled = true;

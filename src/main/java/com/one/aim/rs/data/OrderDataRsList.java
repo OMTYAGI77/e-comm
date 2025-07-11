@@ -1,5 +1,7 @@
 package com.one.aim.rs.data;
 
+import java.util.List;
+
 import com.one.aim.rs.OrderRs;
 import com.one.vm.core.BaseDataRs;
 
@@ -10,19 +12,19 @@ import lombok.Setter;
 @Getter
 @Setter
 @NoArgsConstructor
-public class OrderDataRs extends BaseDataRs {
+public class OrderDataRsList extends BaseDataRs {
 
 	private static final long serialVersionUID = 1L;
 
-	private OrderRs orderRs;
+	private List<OrderRs> orders;
 
-	public OrderDataRs(String message) {
+	public OrderDataRsList(String message) {
 		super(message);
 	}
 
-	public OrderDataRs(String message, OrderRs orderRs) {
+	public OrderDataRsList(String message, List<OrderRs> orders) {
 		super(message);
-		this.orderRs = orderRs;
+		this.orders = orders;
 	}
 
 }

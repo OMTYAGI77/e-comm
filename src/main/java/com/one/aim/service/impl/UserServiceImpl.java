@@ -7,7 +7,6 @@ import java.util.Optional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -176,9 +175,26 @@ public class UserServiceImpl implements UserService {
 //        return user.orElse(null);
 //	}
 
-	public Object retrieveUserBO() {
-		Optional<UserBO> user = userRepo.findById(AuthUtils.findLoggedInUser().getDocId());
-		return user.orElse(null);
+	public BaseRs retrieveUser() throws Exception {
+
+		if (log.isDebugEnabled()) {
+			log.debug("Executing retrieveUser() ->");
+		}
+		try {
+			Optional<UserBO> optUser = userRepo.findById(AuthUtils.findLoggedInUser().getDocId());
+			if (optUser.isEmpty()) {
+				log.error(ErrorCodes.EC_USER_NOT_FOUND);
+				return ResponseUtils.failure(ErrorCodes.EC_USER_NOT_FOUND);
+			}
+			UserBO userBO = optUser.get();
+			UserRs userRs = UserMapper.mapToUserRs(userBO);
+			String message = MessageCodes.MC_RETRIEVED_SUCCESSFUL;
+			return ResponseUtils.success(new UserDataRs(message, userRs));
+		} catch (Exception e) {
+			log.error("Exception retrieveUser() ->" + e);
+			return null;
+		}
+
 	}
 
 	@Override

@@ -28,8 +28,12 @@ public class CartRq extends BaseVM {
 
 	private boolean enabled = true;
 
+	private boolean isVarified;
+
 	private int offer;
-	
-	 private List<AttachmentRq> atts = Collections.emptyList();
+
+	private int totalItem;
+
+	private List<AttachmentRq> atts = Collections.emptyList();
 
 }

@@ -35,7 +35,7 @@ public class AdminServiceImpl implements AdminService {
 
 	@Autowired
 	private PasswordEncoder passwordEncoder;
-	
+
 	@Autowired
 	FileService fileService;
 
@@ -93,18 +93,32 @@ public class AdminServiceImpl implements AdminService {
 		AdminRs adminRs = AdminMapper.mapToAdminRs(adminBO);
 		return ResponseUtils.success(new AdminDataRs(message, adminRs));
 	}
-	
-	
+
 //	public AdminBO getAdminBOById(Long id) {
 //		Optional<AdminBO> admin = adminRepo.findById(id);
 //        return admin.orElse(null);
 //	}
-	
-	public Object retrieveAdminBO() {
-		Optional<AdminBO> admin = adminRepo.findById(AuthUtils.findLoggedInUser().getDocId());
-        return admin.orElse(null);
-	}
 
+	public BaseRs retrieveAdmin() throws Exception {
+
+		if (log.isDebugEnabled()) {
+			log.debug("Executing retrieveUser() ->");
+		}
+		try {
+			Optional<AdminBO> optAdmin = adminRepo.findById(AuthUtils.findLoggedInUser().getDocId());
+			if (optAdmin.isEmpty()) {
+				log.error(ErrorCodes.EC_USER_NOT_FOUND);
+				return ResponseUtils.failure(ErrorCodes.EC_USER_NOT_FOUND);
+			}
+			AdminBO adminBO = optAdmin.get();
+			AdminRs adminRs = AdminMapper.mapToAdminRs(adminBO);
+			String message = MessageCodes.MC_RETRIEVED_SUCCESSFUL;
+			return ResponseUtils.success(new AdminDataRs(message, adminRs));
+		} catch (Exception e) {
+			log.error("Exception retrieveUser() ->" + e);
+			return null;
+		}
+	}
 
 //@Override
 //public AdminBO getAdminBOById(Long id) {

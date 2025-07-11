@@ -35,8 +35,14 @@ public class CartBO {
 
 	private String category;
 
+	private boolean varified = false;
+
 	private boolean enabled = true;
 
+	private int totalitem;
+	
+	private int solditem;
+	
 	private int offer;
 
 	@ManyToOne(fetch = FetchType.LAZY)
@@ -48,5 +54,9 @@ public class CartBO {
 	@ElementCollection(fetch = FetchType.LAZY)
 	@CollectionTable(name = "cart_attachments", joinColumns = @JoinColumn(name = "cart_id"))
 	private List<AttachmentBO> cartatts;
+
+//	@OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+//	@JoinColumn(name = "cart_id")
+//	private List<AttachmentBO> cartatts;
 
 }

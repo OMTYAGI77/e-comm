@@ -12,7 +12,7 @@ public class SellerMapper {
 	public static SellerRs mapToSellerRs(SellerBO bo) {
 
 		if (log.isDebugEnabled()) {
-			log.debug("Executing mapToAdminRs(AdminBO) ->");
+			log.debug("Executing mapToSellerRs(SellerBO) ->");
 		}
 
 		try {
@@ -33,9 +33,10 @@ public class SellerMapper {
 			if (Utils.isNotEmpty(bo.getEmail())) {
 				rs.setEmail(bo.getEmail());
 			}
+			rs.setVarified(bo.isVarified());
 			return rs;
 		} catch (Exception e) {
-			log.error("Exception in mapToAdminRs(AdminBO) - " + e);
+			log.error("Exception in mapToSellerRs(SellerBO) - " + e);
 			return null;
 		}
 	}

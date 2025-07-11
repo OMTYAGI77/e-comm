@@ -6,12 +6,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.one.aim.bo.AddressBO;
-import com.one.aim.bo.UserBO;
 import com.one.aim.constants.ErrorCodes;
 import com.one.aim.constants.MessageCodes;
 import com.one.aim.helper.AddressHelper;
 import com.one.aim.repo.AddressRepo;
-import com.one.aim.repo.UserRepo;
 import com.one.aim.rq.AddressRq;
 import com.one.aim.rs.data.UserDataRs;
 import com.one.aim.service.AddressService;

@@ -13,4 +13,8 @@ public interface CartService {
 
 	public BaseRs retrieveCart(String id);
 
+	public BaseRs retrieveCartByEmpType();
+
+	public BaseRs searchCartsByPname(String pname, int offset, int limit);
+
 }

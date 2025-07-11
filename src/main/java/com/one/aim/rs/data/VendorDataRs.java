@@ -1,6 +1,6 @@
 package com.one.aim.rs.data;
 
-import com.one.aim.rs.OrderRs;
+import com.one.aim.rs.VendorRs;
 import com.one.vm.core.BaseDataRs;
 
 import lombok.Getter;
@@ -10,19 +10,19 @@ import lombok.Setter;
 @Getter
 @Setter
 @NoArgsConstructor
-public class OrderDataRs extends BaseDataRs {
+public class VendorDataRs extends BaseDataRs {
 
 	private static final long serialVersionUID = 1L;
 
-	private OrderRs orderRs;
+	private VendorRs ventor;
 
-	public OrderDataRs(String message) {
+	public VendorDataRs(String message) {
 		super(message);
 	}
 
-	public OrderDataRs(String message, OrderRs orderRs) {
+	public VendorDataRs(String message, VendorRs ventor) {
 		super(message);
-		this.orderRs = orderRs;
+		this.ventor = ventor;
 	}
 
 }

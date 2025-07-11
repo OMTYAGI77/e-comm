@@ -1,29 +1,28 @@
 package com.one.aim.mapper;
 
-import com.one.aim.bo.AdminBO;
-import com.one.aim.rs.AdminRs;
+import com.one.aim.bo.VendorBO;
+import com.one.aim.rs.VendorRs;
 import com.one.utils.Utils;
 
 import lombok.extern.slf4j.Slf4j;
 
-//this data for front-end person
 @Slf4j
-public class AdminMapper {
+public class VendorMapper {
 
-	public static AdminRs mapToAdminRs(AdminBO bo) {
+	public static VendorRs mapToVendorRs(VendorBO bo) {
 
 		if (log.isDebugEnabled()) {
 			log.debug("Executing mapToAdminRs(AdminBO) ->");
 		}
 
 		try {
-			AdminRs rs = null;
+			VendorRs rs = null;
 
 			if (null == bo) {
 				log.warn("AdminBO is NULL");
 				return rs;
 			}
-			rs = new AdminRs();
+			rs = new VendorRs();
 			rs.setDocId(String.valueOf(bo.getId()));
 			if (Utils.isNotEmpty(bo.getUsername())) {
 				rs.setUserName(bo.getUsername());
@@ -31,10 +30,20 @@ public class AdminMapper {
 			if (Utils.isNotEmpty(bo.getPhoneno())) {
 				rs.setPhoneNo(bo.getPhoneno());
 			}
+			if (Utils.isNotEmpty(bo.getPancard())) {
+				rs.setPancard(bo.getPancard());
+			}
+			if (Utils.isNotEmpty(bo.getGst())) {
+				rs.setGst(bo.getGst());
+			}
+			if (Utils.isNotEmpty(bo.getAdhaar())) {
+				rs.setAdhaar(bo.getAdhaar());
+			}
 			if (Utils.isNotEmpty(bo.getEmail())) {
 				rs.setEmail(bo.getEmail());
 			}
-			rs.setAtts(AttachmentMapper.mapToAttachmentRsList(bo.getAtts()));
+			rs.setVarified(bo.isVarified());
+			// rs.setAtts(AttachmentMapper.mapToAttachmentRsList(bo.getAtts()));
 			return rs;
 		} catch (Exception e) {
 			log.error("Exception in mapToAdminRs(AdminBO) - " + e);

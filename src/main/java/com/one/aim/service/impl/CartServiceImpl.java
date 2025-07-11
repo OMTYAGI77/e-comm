@@ -6,17 +6,20 @@ import java.util.Optional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import com.one.aim.bo.AdminBO;
 import com.one.aim.bo.CartBO;
 import com.one.aim.bo.SellerBO;
+import com.one.aim.bo.VendorBO;
 import com.one.aim.constants.ErrorCodes;
 import com.one.aim.constants.MessageCodes;
 import com.one.aim.mapper.CartMapper;
 import com.one.aim.repo.AdminRepo;
 import com.one.aim.repo.CartRepo;
 import com.one.aim.repo.SellerRepo;
+import com.one.aim.repo.VendorRepo;
 import com.one.aim.rq.CartRq;
 import com.one.aim.rs.CartRs;
 import com.one.aim.rs.data.CartDataRs;
@@ -45,6 +48,9 @@ public class CartServiceImpl implements CartService {
 	SellerRepo sellerRepo;
 
 	@Autowired
+	VendorRepo vendorRepo;
+
+	@Autowired
 	FileService fileService;
 
 	@Override
@@ -58,8 +64,10 @@ public class CartServiceImpl implements CartService {
 				AuthUtils.findLoggedInUser().getUserName());
 		SellerBO sellerBO = sellerRepo.findByIdAndUsername(AuthUtils.findLoggedInUser().getDocId(),
 				AuthUtils.findLoggedInUser().getUserName());
+		VendorBO vendorBO = vendorRepo.findByIdAndUsername(AuthUtils.findLoggedInUser().getDocId(),
+				AuthUtils.findLoggedInUser().getUserName());
 
-		if (null == adminBO && null == sellerBO) {
+		if (null == adminBO && null == sellerBO && null == vendorBO) {
 			log.error(ErrorCodes.EC_UNAUTHORIZED_ACCESS);
 			return ResponseUtils.failure(ErrorCodes.EC_UNAUTHORIZED_ACCESS);
 		}
@@ -77,9 +85,16 @@ public class CartServiceImpl implements CartService {
 			Optional<CartBO> optCartBO = cartRepo.findById(id);
 			cartBO = optCartBO.get();
 			if (cartBO == null) {
-				log.error(ErrorCodes.EC_USER_NOT_FOUND);
-				return ResponseUtils.failure(ErrorCodes.EC_USER_NOT_FOUND);
+				log.error(ErrorCodes.EC_CART_NOT_FOUND);
+				return ResponseUtils.failure(ErrorCodes.EC_CART_NOT_FOUND);
 			}
+			if (null == adminBO && rq.isVarified()) {
+				log.error(ErrorCodes.EC_UNAUTHORIZED_ACCESS);
+				return ResponseUtils.failure(ErrorCodes.EC_UNAUTHORIZED_ACCESS);
+			} else {
+				cartBO.setVarified(rq.isVarified());
+			}
+
 		} else {
 			cartBO = new CartBO(); // SAVE
 			message = MessageCodes.MC_SAVED_SUCCESSFUL;
@@ -106,7 +121,7 @@ public class CartServiceImpl implements CartService {
 		cartBO.setEnabled(rq.isEnabled());
 		cartBO.setCartatts(fileService.prepareAttBOs(rq.getAtts(), null));
 		cartRepo.save(cartBO);
-		CartRs cartRs = CartMapper.mapToCartRs(cartBO);
+		CartRs cartRs = CartMapper.mapToCartMinRs(cartBO);
 		return ResponseUtils.success(new CartDataRs(message, cartRs));
 	}
 
@@ -120,9 +135,9 @@ public class CartServiceImpl implements CartService {
 		try {
 			int page = offset / limit;
 			PageRequest pageRequest = PageRequest.of(page, limit);
-			Page<CartBO> cartPage = cartRepo.findAll(pageRequest);
+			Page<CartBO> cartPage = cartRepo.findAllByVarifiedIsTrue(pageRequest);
 
-			List<CartRs> rslist = CartMapper.mapToCartRsList(cartPage.getContent());
+			List<CartRs> rslist = CartMapper.mapToCartMinRsList(cartPage.getContent());
 			String message = MessageCodes.MC_RETRIEVED_SUCCESSFUL;
 			return ResponseUtils.success(new CartDataRsList(message, rslist));
 		} catch (Exception e) {
@@ -139,8 +154,8 @@ public class CartServiceImpl implements CartService {
 			log.debug("Executing retrieveCartsByCategory(category) ->");
 		}
 
-		List<CartBO> bos = cartRepo.findAllByCategory(category);
-		List<CartRs> rslist = CartMapper.mapToCartRsList(bos);
+		List<CartBO> bos = cartRepo.findAllByCategoryAndVarifiedIsTrue(category);
+		List<CartRs> rslist = CartMapper.mapToCartMinRsList(bos);
 		String message = MessageCodes.MC_RETRIEVED_SUCCESSFUL;
 		return ResponseUtils.success(new CartDataRsList(message, rslist));
 	}
@@ -157,9 +172,45 @@ public class CartServiceImpl implements CartService {
 		if (!optBo.isEmpty()) {
 			cartBO = optBo.get();
 		}
-		CartRs rs = CartMapper.mapToCartRs(cartBO);
+		CartRs rs = CartMapper.mapToCartMinRs(cartBO);
 		String message = MessageCodes.MC_RETRIEVED_SUCCESSFUL;
 		return ResponseUtils.success(new CartDataRs(message, rs));
+	}
+
+	@Override
+	public BaseRs retrieveCartByEmpType() {
+
+		if (log.isDebugEnabled()) {
+			log.debug("Executing retrieveCartsByCategory(category) ->");
+		}
+
+		List<CartBO> cartBOs = cartRepo.findAllBySellerid(AuthUtils.findLoggedInUser().getDocId());
+		if (Utils.isEmpty(cartBOs)) {
+			log.error(MessageCodes.MC_NO_RECORDS_FOUND);
+			String message = MessageCodes.MC_NO_RECORDS_FOUND;
+			return ResponseUtils.success(new CartDataRs(message));
+		}
+		List<CartRs> rsList = CartMapper.mapToCartRsList(cartBOs);
+		String message = MessageCodes.MC_RETRIEVED_SUCCESSFUL;
+		return ResponseUtils.success(new CartDataRsList(message, rsList));
+	}
+
+	@Override
+	public BaseRs searchCartsByPname(String pname, int offset, int limit) {
+
+		if (log.isDebugEnabled()) {
+			log.debug("Executing searchCartsByPname(category) ->");
+		}
+		try {
+			Pageable pageable = PageRequest.of(offset / limit, limit);
+			Page<CartBO> cartPage = cartRepo.findByPnameContainingIgnoreCase(pname, pageable);
+			List<CartRs> rslist = CartMapper.mapToCartMinRsList(cartPage.getContent());
+			String message = MessageCodes.MC_RETRIEVED_SUCCESSFUL;
+			return ResponseUtils.success(new CartDataRsList(message, rslist));
+		} catch (Exception e) {
+			log.error("Exception in searchCartsByPname(IdRq) - " + e);
+			return ResponseUtils.failure(e);
+		}
 	}
 
 }

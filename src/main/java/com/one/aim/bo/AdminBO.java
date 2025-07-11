@@ -1,6 +1,5 @@
 package com.one.aim.bo;
 
-import java.util.Collections;
 import java.util.List;
 
 import jakarta.persistence.CollectionTable;
