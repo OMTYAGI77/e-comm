@@ -1,9 +1,5 @@
 package com.one.aim.bo;
 
-import java.util.List;
-
-import jakarta.persistence.CollectionTable;
-import jakarta.persistence.ElementCollection;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
@@ -45,15 +41,17 @@ public class CartBO {
 	
 	private int offer;
 
+	private Long cartempid;
+	
+	private String cartempname;
+	
 	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name = "user_id")
-	private UserBO user;
+    @JoinColumn(name = "user_id")
+    private UserBO user;
 
-	private Long sellerid;
-
-	@ElementCollection(fetch = FetchType.LAZY)
-	@CollectionTable(name = "cart_attachments", joinColumns = @JoinColumn(name = "cart_id"))
-	private List<AttachmentBO> cartatts;
+//	@OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+//	@JoinColumn(name = "cart_id") // creates a unidirectional relationship
+//	private List<AttachmentBO> cartatts = new ArrayList<>();
 
 //	@OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
 //	@JoinColumn(name = "cart_id")

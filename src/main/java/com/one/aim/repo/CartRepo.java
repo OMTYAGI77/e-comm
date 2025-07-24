@@ -12,18 +12,22 @@ import com.one.aim.bo.CartBO;
 @Repository
 public interface CartRepo extends JpaRepository<CartBO, Long> {
 
-	List<CartBO> findByUserId(Long userId);
+	// List<CartBO> findByUserId(Long userId);
+
+	// List<CartBO> findBy
 
 	List<CartBO> findByEnabledIsTrue();
 
 	List<CartBO> findAllByCategoryAndVarifiedIsTrue(String category);
 
-	List<CartBO> findAllBySellerid(Long sellerId);
+	List<CartBO> findAllByCartempid(Long id);
+
+	List<CartBO> findAllByCartempidAndCartempname(Long id, String name);
 
 	Page<CartBO> findAllByVarifiedIsTrue(Pageable pageable);
-		
-    List<CartBO> findByPnameContainingIgnoreCase(String pname);
 
-    Page<CartBO> findByPnameContainingIgnoreCase(String pname, Pageable pageable);
+	List<CartBO> findByPnameContainingIgnoreCase(String pname);
+
+	Page<CartBO> findByPnameContainingIgnoreCase(String pname, Pageable pageable);
 
 }

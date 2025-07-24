@@ -8,13 +8,11 @@ import org.springframework.stereotype.Service;
 
 import com.one.aim.bo.CartBO;
 import com.one.aim.bo.UserBO;
-import com.one.aim.bo.WishlistBO;
 import com.one.aim.constants.ErrorCodes;
 import com.one.aim.constants.MessageCodes;
 import com.one.aim.mapper.WishlistMapper;
 import com.one.aim.repo.CartRepo;
 import com.one.aim.repo.UserRepo;
-import com.one.aim.repo.WishlistRepo;
 import com.one.aim.rs.WishlistRs;
 import com.one.aim.rs.data.WishlistDataRs;
 import com.one.aim.rs.data.WishlistDataRsList;
@@ -35,8 +33,8 @@ public class WishlistServiceImpl implements WishlistService {
 	@Autowired
 	UserRepo userRepo;
 
-	@Autowired
-	WishlistRepo wishlistRepo;
+//	@Autowired
+//	WishlistRepo wishlistRepo;
 
 	@Override
 	public BaseRs addToWishlist(String cartId) throws Exception {
@@ -52,19 +50,15 @@ public class WishlistServiceImpl implements WishlistService {
 			return ResponseUtils.failure(ErrorCodes.EC_INVALID_INPUT);
 		}
 		CartBO cartBO = optCartBO.get();
-		WishlistBO wishlistBO = new WishlistBO();
-		wishlistBO.setPname(cartBO.getPname());
-		wishlistBO.setPrice(cartBO.getPrice());
-		wishlistBO.setCategory(cartBO.getCategory());
-		wishlistBO.setOffer(cartBO.getOffer());
-		wishlistBO.setDescription(cartBO.getDescription());
-		Optional<UserBO> optUserBO = userRepo.findById(AuthUtils.findLoggedInUser().getDocId());
-		if (optUserBO.isEmpty()) {
+		Long userId = AuthUtils.findLoggedInUser().getDocId();
+		Optional<UserBO> optUser = userRepo.findById(userId);
+		if (optUser.isEmpty()) {
 			log.error(ErrorCodes.EC_USER_NOT_FOUND);
 			return ResponseUtils.failure(ErrorCodes.EC_USER_NOT_FOUND);
 		}
-		wishlistBO.setUser(optUserBO.get());
-		wishlistRepo.save(wishlistBO);
+		UserBO user = optUser.get();
+		user.setWishlistItems(List.of(cartBO));
+		userRepo.save(user);
 		String message = MessageCodes.MC_ADDED_SUCCESSFUL;
 		return ResponseUtils.success(new WishlistDataRs(message));
 	}
@@ -80,9 +74,9 @@ public class WishlistServiceImpl implements WishlistService {
 			log.error(ErrorCodes.EC_USER_NOT_FOUND);
 			return ResponseUtils.failure(ErrorCodes.EC_USER_NOT_FOUND);
 		}
-		List<WishlistBO> wishlistBOs = wishlistRepo.findByUser(optUserBO.get());
+		List<CartBO> wishlist = optUserBO.get().getWishlistItems();
 
-		List<WishlistRs> WishlistRsList = WishlistMapper.mapToWishlistRsList(wishlistBOs);
+		List<WishlistRs> WishlistRsList = WishlistMapper.mapToWishlistRsList(wishlist);
 		String message = MessageCodes.MC_RETRIEVED_SUCCESSFUL;
 		return ResponseUtils.success(new WishlistDataRsList(message, WishlistRsList));
 	}
@@ -93,10 +87,17 @@ public class WishlistServiceImpl implements WishlistService {
 		if (log.isDebugEnabled()) {
 			log.debug("Executing getUserWishlist(cartId) ->");
 		}
+		Optional<UserBO> optUserBO = userRepo.findById(AuthUtils.findLoggedInUser().getDocId());
+		if (optUserBO.isEmpty()) {
+			log.error(ErrorCodes.EC_USER_NOT_FOUND);
+			return ResponseUtils.failure(ErrorCodes.EC_USER_NOT_FOUND);
+		}
+		List<CartBO> wishlist = optUserBO.get().getWishlistItems();
+		
+		wishlist.removeIf(cart -> cart.getId()==Long.getLong(wishid));
 
-		wishlistRepo.deleteById(Long.valueOf(wishid));
 		String message = MessageCodes.MC_DELETED_SUCCESSFUL;
-		return ResponseUtils.success(new WishlistDataRs(message));
+		return ResponseUtils.success(new WishlistDataRs(message,wishlist));
 	}
 
 }

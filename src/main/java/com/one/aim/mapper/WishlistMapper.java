@@ -4,7 +4,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-import com.one.aim.bo.WishlistBO;
+import com.one.aim.bo.CartBO;
 import com.one.aim.rs.WishlistRs;
 import com.one.utils.Utils;
 
@@ -13,7 +13,7 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 public class WishlistMapper {
 
-	public static WishlistRs mapToWishlistRs(WishlistBO bo) {
+	public static WishlistRs mapToWishlistRs(CartBO bo) {
 
 		if (log.isDebugEnabled()) {
 			log.debug("Executing mapToWishlistRs(CartBO) ->");
@@ -46,7 +46,7 @@ public class WishlistMapper {
 		}
 	}
 
-	public static List<WishlistRs> mapToWishlistRsList(List<WishlistBO> bos) {
+	public static List<WishlistRs> mapToWishlistRsList(List<CartBO> bos) {
 
 		if (log.isDebugEnabled()) {
 			log.debug("Executing mapToWishlistRsList(CartBO) ->");
@@ -58,7 +58,7 @@ public class WishlistMapper {
 				return Collections.emptyList();
 			}
 			List<WishlistRs> rsList = new ArrayList<>();
-			for (WishlistBO bo : bos) {
+			for (CartBO bo : bos) {
 				WishlistRs rs = mapToWishlistRs(bo);
 				if (null != rs) {
 					rsList.add(rs);

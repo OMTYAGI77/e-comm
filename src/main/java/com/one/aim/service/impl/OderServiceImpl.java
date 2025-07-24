@@ -8,8 +8,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.one.aim.bo.AddressBO;
-import com.one.aim.bo.AdminBO;
 import com.one.aim.bo.CartBO;
+import com.one.aim.bo.DeliveryPersonBO;
 import com.one.aim.bo.OrderBO;
 import com.one.aim.bo.UserBO;
 import com.one.aim.constants.ErrorCodes;
@@ -18,6 +18,7 @@ import com.one.aim.mapper.OrderMapper;
 import com.one.aim.repo.AddressRepo;
 import com.one.aim.repo.AdminRepo;
 import com.one.aim.repo.CartRepo;
+import com.one.aim.repo.DeliveryPersonRepo;
 import com.one.aim.repo.OrderRepo;
 import com.one.aim.repo.UserRepo;
 import com.one.aim.rq.OrderRq;
@@ -30,6 +31,7 @@ import com.one.utils.Utils;
 import com.one.vm.core.BaseRs;
 import com.one.vm.utils.ResponseUtils;
 
+import jakarta.transaction.Transactional;
 import lombok.extern.slf4j.Slf4j;
 
 @Service
@@ -38,10 +40,9 @@ public class OderServiceImpl implements OrderService {
 
 	@Autowired
 	private UserRepo userRepo;
-	
+
 	@Autowired
 	private AdminRepo admnRepo;
-
 
 	@Autowired
 	private CartRepo cartRepo;
@@ -51,22 +52,29 @@ public class OderServiceImpl implements OrderService {
 
 	@Autowired
 	private AddressRepo addressRepo;
+	
+	@Autowired
+	DeliveryPersonRepo deliveryPersonRepo;
 
 	@Override
+	@Transactional
 	public BaseRs placeOrder(OrderRq rq) throws Exception {
-		// TODO Auto-generated method stub
-//		UserBO userBO = userRepo.findById(rq.getUserId()).orElseThrow(() -> new RuntimeException("User not found"));
+		Long userId = AuthUtils.findLoggedInUser().getDocId();
 
-//		List<CartBO> cartItems = cartRepo.findByUserId(rq.getUserId()).stream().filter(CartBO::isEnabled)
+		// Fetch enabled cart items for the current user
+//		List<CartBO> cartItems = cartRepo.findByUserId(userId).stream().filter(CartBO::isEnabled)
 //				.collect(Collectors.toList());
+
 		List<CartBO> cartItems = cartRepo.findAll();
 
 		if (cartItems.isEmpty()) {
 			throw new RuntimeException("Cart is empty");
 		}
 
-		Long total = cartItems.stream().map(CartBO::getPrice).reduce(0L, (a, b) -> a + b);
+		// Calculate total amount
+		Long total = cartItems.stream().map(CartBO::getPrice).reduce(0L, Long::sum);
 
+		// Save shipping address
 		AddressBO address = new AddressBO();
 		address.setFullName(rq.getFullName());
 		address.setStreet(rq.getStreet());
@@ -75,25 +83,28 @@ public class OderServiceImpl implements OrderService {
 		address.setZip(rq.getZip());
 		address.setCountry(rq.getCountry());
 		address.setPhone(rq.getPhone());
-		address.setUserid(AuthUtils.findLoggedInUser().getDocId());
+		address.setUserid(userId); 
 		addressRepo.save(address);
 
+		// Mark items as ordered/disabled
 		for (CartBO item : cartItems) {
-			item.setEnabled(false); // Mark as dispatched
+			item.setEnabled(false);
 		}
-
+		cartRepo.saveAll(cartItems);
+		// Create order
 		OrderBO order = new OrderBO();
-		order.setUserid(AuthUtils.findLoggedInUser().getDocId());
-		;
+		Optional<UserBO> optUser = userRepo.findById(userId);
+		if (!optUser.isEmpty()) {
+			order.setUser(optUser.get());
+		}
 		order.setTotalAmount(total);
 		order.setPaymentMethod(rq.getPaymentMethod().toUpperCase());
 		order.setOrderTime(LocalDateTime.now());
 		order.setShippingAddress(address);
-		order.setOrderedItems(cartItems);
-		String message = MessageCodes.MC_SAVED_SUCCESSFUL;
+		order.setCartItems(cartItems);
 		orderRepo.save(order);
-		return ResponseUtils.success(new OrderDataRs(message));
 
+		return ResponseUtils.success(new OrderDataRs(MessageCodes.MC_SAVED_SUCCESSFUL));
 	}
 
 	@Override
@@ -129,26 +140,57 @@ public class OderServiceImpl implements OrderService {
 		if (log.isDebugEnabled()) {
 			log.debug("Executing retrieveOrders() ->");
 		}
+
 		try {
-			Long id = AuthUtils.findLoggedInUser().getDocId();
-			Optional<UserBO> optUser = userRepo.findById(id);
-			Optional<AdminBO> admin=admnRepo.findById(id);
-			if (optUser.isEmpty() && admin.isEmpty()) {
+			Long userId = AuthUtils.findLoggedInUser().getDocId();
+
+			Optional<UserBO> userOpt = userRepo.findById(userId);
+			if (userOpt.isEmpty()) {
 				log.error(ErrorCodes.EC_USER_NOT_FOUND);
 				return ResponseUtils.failure(ErrorCodes.EC_USER_NOT_FOUND);
 			}
-			List<OrderBO> orderBOs = orderRepo.findAllByUserid(id);
+
+			// Fetch orders for the logged-in user
+			List<OrderBO> orderBOs = orderRepo.findByUser_Id(userId);
 			if (Utils.isEmpty(orderBOs)) {
 				log.error(ErrorCodes.EC_RECORD_NOT_FOUND);
 				return ResponseUtils.failure(ErrorCodes.EC_RECORD_NOT_FOUND);
 			}
+
 			List<OrderRs> rsList = OrderMapper.mapToOrderRsList(orderBOs);
-			String message = MessageCodes.MC_RETRIEVED_SUCCESSFUL;
-			return ResponseUtils.success(new OrderDataRsList(message, rsList));
+			return ResponseUtils.success(new OrderDataRsList(MessageCodes.MC_RETRIEVED_SUCCESSFUL, rsList));
+
 		} catch (Exception e) {
-			log.error("Exception in retrieveOrders() ->" + e);
-			return null;
+			log.error("Exception in retrieveOrders(): ", e);
+			return ResponseUtils.failure("Unexpected error occurred");
 		}
 	}
+	
+	public void assignDeliveryPerson(Long orderId, Long deliveryPersonId) {
+	    OrderBO order = orderRepo.findById(orderId).orElseThrow(() -> new RuntimeException("Order not found"));
+	    DeliveryPersonBO person = deliveryPersonRepo.findById(deliveryPersonId).orElseThrow(() -> new RuntimeException("Delivery person not found"));
+
+	    order.setDeliveryPerson(person);
+	    order.setStatus("ASSIGNED");
+
+	    person.setStatus("ON_DELIVERY");
+
+	    orderRepo.save(order);
+	    deliveryPersonRepo.save(person);
+	}
+	
+	public void updateOrderStatus(Long orderId, String status) {
+	    OrderBO order = orderRepo.findById(orderId).orElseThrow(() -> new RuntimeException("Order not found"));
+	    order.setStatus(status);
+
+	    if (status.equals("DELIVERED")) {
+	        DeliveryPersonBO dp = order.getDeliveryPerson();
+	        dp.setStatus("AVAILABLE");
+	        deliveryPersonRepo.save(dp);
+	    }
+
+	    orderRepo.save(order);
+	}
+
 
 }

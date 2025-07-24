@@ -44,7 +44,7 @@ public class UserBO {
 	private List<CartBO> cartItems = new ArrayList<>();
 
 	@OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
-	private List<WishlistBO> wishlistItems = new ArrayList<>();
+	private List<CartBO> wishlistItems = new ArrayList<>();
 	
 	@ElementCollection(fetch = FetchType.LAZY)
 	@CollectionTable(name = "user_attachments", joinColumns = @JoinColumn(name = "user_id"))

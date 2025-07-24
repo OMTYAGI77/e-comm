@@ -39,7 +39,7 @@ public class CartMapper {
 			}
 			rs.setPrice(bo.getPrice());
 			rs.setOffer(bo.getOffer());
-			rs.setAtts(AttachmentMapper.mapToAttachmentRsList(bo.getCartatts()));
+			//rs.setAtts(AttachmentMapper.mapToAttachmentRsList(bo.getCartatts()));
 			return rs;
 		} catch (Exception e) {
 			log.error("Exception in mapToCartRs(CartBO) - " + e);
@@ -102,7 +102,7 @@ public class CartMapper {
 			rs.setOffer(bo.getOffer());
 			rs.setVarified(bo.isVarified());
 
-			rs.setAtts(AttachmentMapper.mapToAttachmentRsList(bo.getCartatts()));
+			//rs.setAtts(AttachmentMapper.mapToAttachmentRsList(bo.getCartatts()));
 			return rs;
 		} catch (Exception e) {
 			log.error("Exception in mapToCartRs(CartBO) - " + e);

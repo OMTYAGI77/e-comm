@@ -31,9 +31,9 @@ public class OrderMapper {
 
 			rs.setDocId(String.valueOf(bo.getId()));
 			long totalAmount = 0;
-			if (Utils.isNotEmpty(bo.getOrderedItems())) {
-				rs.setOrderedItems(CartMapper.mapToCartRsList(bo.getOrderedItems()));
-				for (CartBO cartBO : bo.getOrderedItems()) {
+			if (Utils.isNotEmpty(bo.getCartItems())) {
+				rs.setOrderedItems(CartMapper.mapToCartRsList(bo.getCartItems()));
+				for (CartBO cartBO : bo.getCartItems()) {
 					totalAmount = totalAmount + cartBO.getPrice();
 				}
 			}

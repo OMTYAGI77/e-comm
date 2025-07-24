@@ -142,7 +142,7 @@ public class SellerServiceImpl implements SellerService {
 		if (log.isDebugEnabled()) {
 			log.debug("Executing retrieveSellerCarts() ->");
 		}
-		List<CartBO> bos = cartRepo.findAllBySellerid(AuthUtils.findLoggedInUser().getDocId());
+		List<CartBO> bos = cartRepo.findAllByCartempid(AuthUtils.findLoggedInUser().getDocId());
 		String message;
 		if (Utils.isEmpty(bos)) {
 			message = MessageCodes.MC_NO_RECORDS_FOUND;

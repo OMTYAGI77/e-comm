@@ -15,6 +15,7 @@ import com.one.aim.bo.SellerBO;
 import com.one.aim.bo.VendorBO;
 import com.one.aim.constants.ErrorCodes;
 import com.one.aim.constants.MessageCodes;
+import com.one.aim.controller.OrderNotificationController;
 import com.one.aim.mapper.CartMapper;
 import com.one.aim.repo.AdminRepo;
 import com.one.aim.repo.CartRepo;
@@ -49,6 +50,9 @@ public class CartServiceImpl implements CartService {
 
 	@Autowired
 	VendorRepo vendorRepo;
+
+	@Autowired
+	private OrderNotificationController orderNotificationController;
 
 	@Autowired
 	FileService fileService;
@@ -104,8 +108,9 @@ public class CartServiceImpl implements CartService {
 			cartBO.setPname(pName);
 		}
 		Long sellerId = AuthUtils.findLoggedInUser().getDocId();
-		cartBO.setSellerid(sellerId);
-
+		String name= AuthUtils.findLoggedInUser().getUserName();
+		cartBO.setCartempid(sellerId);
+		cartBO.setCartempname(name);
 		// cartBO.setCartatts(fileService.prepareAttBOs(rq.getAtts(), null));
 
 		String description = Utils.getValidString(rq.getDescription());
@@ -119,8 +124,10 @@ public class CartServiceImpl implements CartService {
 		cartBO.setPrice(rq.getPrice());
 		cartBO.setOffer(rq.getOffer());
 		cartBO.setEnabled(rq.isEnabled());
-		cartBO.setCartatts(fileService.prepareAttBOs(rq.getAtts(), null));
+		// cartBO.setCartatts(fileService.prepareAttBOs(rq.getAtts(), null));
 		cartRepo.save(cartBO);
+		orderNotificationController.notifyVendor(AuthUtils.findLoggedInUser().getUserName(),
+				"You have received a new order.");
 		CartRs cartRs = CartMapper.mapToCartMinRs(cartBO);
 		return ResponseUtils.success(new CartDataRs(message, cartRs));
 	}
@@ -184,7 +191,7 @@ public class CartServiceImpl implements CartService {
 			log.debug("Executing retrieveCartsByCategory(category) ->");
 		}
 
-		List<CartBO> cartBOs = cartRepo.findAllBySellerid(AuthUtils.findLoggedInUser().getDocId());
+		List<CartBO> cartBOs = cartRepo.findAllByCartempidAndCartempname(AuthUtils.findLoggedInUser().getDocId(),AuthUtils.findLoggedInUser().getUserName());
 		if (Utils.isEmpty(cartBOs)) {
 			log.error(MessageCodes.MC_NO_RECORDS_FOUND);
 			String message = MessageCodes.MC_NO_RECORDS_FOUND;

@@ -1,5 +1,8 @@
 package com.one.aim.rs.data;
 
+import java.util.List;
+
+import com.one.aim.bo.CartBO;
 import com.one.vm.core.BaseDataRs;
 
 import lombok.Getter;
@@ -13,13 +16,13 @@ public class WishlistDataRs extends BaseDataRs {
 
 	private static final long serialVersionUID = 1L;
 
-	private WishlistDataRs wishlist;
+	private List<CartBO> wishlist;
 
 	public WishlistDataRs(String message) {
 		super(message);
 	}
 
-	public WishlistDataRs(String message, WishlistDataRs wishlist) {
+	public WishlistDataRs(String message, List<CartBO> wishlist) {
 		super(message);
 		this.wishlist = wishlist;
 	}
